@@ -198,14 +198,14 @@ function local_video_directory_get_videos_by_tags($list, $tagid=0, $start = null
     }
 
     if ($search) {
-        $match = " (usergroup LIKE ? OR orig_filename LIKE ? OR firstname LIKE ? OR  lastname LIKE ? OR uniqid LIKE ?
+        $match = " (usergroup LIKE ? OR orig_filename LIKE ? OR firstname LIKE ? OR  lastname LIKE ? OR uniqid LIKE ? OR v.id = ?
                     OR t.name LIKE ?) ";
         if ($groups != '') {
             $match .= " AND (" . $groups . ") ";
         }
         $where = " WHERE " . $match;
         $whereor = " AND " . $match;
-        $params = array_merge($params, ["%$search%", "%$search%", "%$search%", "%$search%", "%$search%", "%$search%"],
+        $params = array_merge($params, ["%$search%", "%$search%", "%$search%", "%$search%", "%$search%", $search , "%$search%"],
                                 $groupsparams, $catsparams);
     } else {
         if ($groups != '') {
@@ -308,7 +308,7 @@ function local_video_directory_get_videos($order = 0, $start = null, $length = n
 
     if ($search) {
         $match = " (usergroup LIKE ? OR orig_filename LIKE ? OR firstname LIKE ?
-                    OR  lastname LIKE ? OR uniqid LIKE ? OR t.name LIKE ? ) ";
+                    OR  lastname LIKE ? OR uniqid LIKE ? OR v.id = ? OR t.name LIKE ? ) ";
         if ($groups != '') {
             $match .= " AND (" . $groups . ") ";
         }
@@ -318,7 +318,7 @@ function local_video_directory_get_videos($order = 0, $start = null, $length = n
 
         $where = " WHERE " . $match;
         $whereor = " AND " . $match;
-        $params = array_merge(["%$search%", "%$search%", "%$search%", "%$search%", "%$search%", "%$search%"],
+        $params = array_merge(["%$search%", "%$search%", "%$search%", "%$search%", "%$search%", $search, "%$search%"],
                                 $groupsparams, $catsparams);
     } else {
         $where = "";
@@ -347,6 +347,7 @@ function local_video_directory_get_videos($order = 0, $start = null, $length = n
                                     LEFT JOIN {user} u on v.owner_id = u.id
                                     LEFT JOIN {local_video_directory_catvid} c ON c.video_id = v.id' .
                                     $where . $orderby, $params, $start, $length);
+
     } else {
         if (($settings->group == "institution") || ($settings->group == "department")) {
             $videos = $DB->get_records_sql('SELECT DISTINCT v.*, ' . $DB->sql_concat_join("' '", array("firstname", "lastname")) .
@@ -376,6 +377,7 @@ function local_video_get_thumbnail_url($thumb, $videoid, $clean=0) {
     global $CFG, $DB;
     $dirs = get_directories();
     $thumb = str_replace(".png", "-mini.png", $thumb);
+
     $thumbdata = explode('-', $thumb);
     $thumbid = $thumbdata[0];
     $thumbseconds = isset($thumbdata[1]) ? "&second=$thumbdata[1]" : '';
@@ -470,6 +472,9 @@ function local_video_directory_studio_action($data, $type) {
 
         if ($dat->save == "new") {
             $name = $DB->get_field('local_video_directory', 'orig_filename', ['id' => $dat->video_id]);
+            if ($type == "cat") {
+                $name .= ' + ' . $DB->get_field('local_video_directory', 'orig_filename', ['id' => $dat->video_id_cat]);
+            }
             $record = array('orig_filename' => $type . ' ' . $name,
                     'owner_id' => $dat->user_id,
                     'private' => 1,
@@ -485,20 +490,48 @@ function local_video_directory_studio_action($data, $type) {
             $cmd[] = $ffmpeg . " -i " . $streamingdir . "/" . $filename .
                 ".mp4 -filter:v \"crop=$width:$height:$startx:$starty\" " . $origdir . "/" . $newid . ".mp4";
         } else if ($type == "cat") {
+            mkdir($CFG->dataroot . '/temp/');
             $cmd[] = $ffmpeg . " -i " . $streamingdir . "/" . $filename .
                 ".mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts $CFG->dataroot/temp/intermediate1.ts";
             $cmd[] = $ffmpeg . " -i " . $streamingdir . "/" . local_video_directory_get_filename($dat->video_id_cat) .
                 ".mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts $CFG->dataroot/temp/intermediate2.ts";
             $cmd[] = $ffmpeg . ' -i "concat:' . $CFG->dataroot . '/temp/intermediate1.ts|' .
-                        $CFG->dataroot . '/tmp/intermediate2.ts" -c copy -bsf:a aac_adtstoasc ' .
+                        $CFG->dataroot . '/temp/intermediate2.ts" -c copy -bsf:a aac_adtstoasc ' .
                         $origdir . "/" . $newid . ".mp4";
+
         } else if ($type == "cut") {
-            $start = gmdate("H:i:s", $dat->secbefore);
-            $length = $DB->get_field('local_video_directory', 'length', ['id' => $dat->video_id]);
-            $time = strtotime($length);
-            $newlength = date("H:i:s", $time - $dat->secafter);
-            $cmd[] = $ffmpeg . " -ss " . $start .  " -i " . $streamingdir . "/" . $filename .
-                ".mp4 -to $newlength -c copy -copyts " . $origdir . "/" . $newid . ".mp4";
+            if ($dat->cuttype == "sides") {
+                $start = gmdate("H:i:s", $dat->secbefore);
+                $length = $DB->get_field('local_video_directory', 'length', ['id' => $dat->video_id]);
+                $time = strtotime($length);
+                $newlength = date("H:i:s", $time - $dat->secafter);
+                $cmd[] = $ffmpeg . " -ss " . $start .  " -i " . $streamingdir . "/" . $filename .
+                    ".mp4 -to $newlength -c copy -copyts " . $origdir . "/" . $newid . ".mp4";
+            } else {
+                $start = gmdate("H:i:s", $dat->secbefore);
+                $length = $DB->get_field('local_video_directory', 'length', ['id' => $dat->video_id]);
+                $time = strtotime($length);
+                $newlength = date("H:i:s", $time - $dat->secafter);
+                $cmd[] = $ffmpeg . " -ss 00:00:00" .  " -i " . $streamingdir . $filename .
+                    ".mp4 -to $start -c copy -copyts " . $origdir . $newid . "-start.mp4";
+
+                $end = gmdate("H:i:s", $dat->secafter);
+                $length2 = $DB->get_field('local_video_directory', 'length', ['id' => $dat->video_id]);
+                $time2 = strtotime($length2);
+                $newlength2 = date("H:i:s", $time2 - $end);
+                $cmd[] = $ffmpeg . " -ss " . $end .  " -i " . $streamingdir . $filename .
+                    ".mp4 -to $newlength2 -c copy -copyts " . $origdir . $newid . "-end.mp4";
+
+                mkdir($CFG->dataroot . '/temp/');
+                $cmd[] = $ffmpeg . " -i " . $origdir . "/" . $newid .
+                        "-start.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts $CFG->dataroot/temp/tempcut1.ts";
+                $cmd[] = $ffmpeg . " -i " . $origdir . "/" . $newid .
+                        "-end.mp4 -c copy -bsf:v h264_mp4toannexb -f mpegts $CFG->dataroot/temp/tempcut2.ts";
+                $cmd[] = $ffmpeg . ' -i "concat:' . $CFG->dataroot . '/temp/tempcut1.ts|' .
+                            $CFG->dataroot . '/temp/tempcut2.ts" -c copy -bsf:a aac_adtstoasc ' .
+                            $origdir . "/" . $newid . ".mp4";
+            }
+
         } else if ($type == "merge") {
             $cmd[] = $ffmpeg . " -i " . $streamingdir . "/" . $filename . ".mp4 -i " . $dirs['multidir'] .
                 $dat->video_id_small . "_" . $dat->height . ".mp4 -map 0:0 -map " . $dat->audio . ":1" .
@@ -516,10 +549,19 @@ function local_video_directory_studio_action($data, $type) {
 
         foreach ($cmd as $cm) {
             echo "[local_video_directory] CMD: $cm";
+            echo "\n";
             exec($cm);
         }
+
         copy($origdir . "/" . $newid . ".mp4", $origdir . "/" . $newid);
         unlink($origdir . "/" . $newid . ".mp4");
+
+        if ($type == "cut" && $dat->cuttype != "sides") {
+            unlink($CFG->dataroot . "/temp/tempcut1.ts");
+            unlink($CFG->dataroot . "/temp/tempcut2.ts");
+            unlink($origdir  . "/" . $newid . "-end.mp4");
+            unlink($origdir  . "/" . $newid . "-start.mp4");
+        }
         if ($type == "cat") {
             unlink($CFG->dataroot . "/temp/intermediate1.ts");
             unlink($CFG->dataroot . "/temp/intermediate2.ts");
@@ -576,6 +618,7 @@ function local_video_get_groups($settings) {
 // This function is for moving from id filename to hash filename.
 function local_video_directory_get_filename ($id) {
     global $DB;
+
     $video = $DB->get_record('local_video_directory', ['id' => $id]);
     if ($video->filename != $id . '.mp4') {
         $filename = $video->filename;

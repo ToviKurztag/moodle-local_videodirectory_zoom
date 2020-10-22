@@ -142,7 +142,6 @@ function local_video_directory_create_dash($id, $converted, $dashdir, $ffmpeg, $
     }
     // Update state to 7 - ready + multi.
     $DB->update_record("local_video_directory", array('id' => $id, 'convert_status' => 7));
-
 }
 
 function local_video_directory_get_dash_url($videoid) {
@@ -184,10 +183,12 @@ function local_video_directory_get_hls_url($videoid) {
     $id = $videoid;
     $streams = $DB->get_records("local_video_directory_multi", array("video_id" => $id));
     if (!$streams) {
-        return;
-    }
-    foreach ($streams as $stream) {
-        $files[] = $stream->filename;
+        $files[] = local_video_directory_get_filename($id);
+        $hlsstreaming = $config->hlsingle_base_url;
+    } else {
+        foreach ($streams as $stream) {
+            $files[] = $stream->filename;
+        }
     }
 
     $parts = array();
@@ -196,9 +197,12 @@ function local_video_directory_get_hls_url($videoid) {
         $parts[] = preg_split("/[_.]/", $file);
     }
 
-    $hlsurl = $hlsstreaming . '/' . $parts[0][0] . "_";
-    foreach ($parts as $key => $value) {
-        $hlsurl .= "," . $value[1];
+    $hlsurl = $hlsstreaming . '/' . $parts[0][0];
+    if ($streams) {
+        $hlsurl .= "_";
+        foreach ($parts as $key => $value) {
+            $hlsurl .= "," . $value[1];
+        }
     }
     $hlsurl .= "," . ".mp4" . $nginxmulti . "/master.m3u8";
 
@@ -212,11 +216,13 @@ function local_video_directory_render_navbar_output(\renderer_base $renderer) {
     $context = context_system::instance();
     if (has_capability('local/video_directory:video', $context) || is_video_admin($USER)) {
         return '<div style="float:right; padding-top: 7px;" class="popover-region nav-link">
-                    <i class="icon fa fa-video-camera fa-fw "
-                               title="Video Directory"
-                               aria-label="Video Directory"
-                               OnClick="location.href = \' ' . $CFG->wwwroot . '/local/video_directory/' . '\';">
-                    </i>
+                    <a href="' . $CFG->wwwroot . '/local/video_directory/">
+                        <i class="icon fa fa-video-camera fa-fw "
+                                title="Video Directory"
+                                aria-label="Video Directory"
+                                OnClick="location.href = \' ' . $CFG->wwwroot . '/local/video_directory/' . '\';">
+                        </i>
+                    </a>
                 </div>';
     } else {
         return;

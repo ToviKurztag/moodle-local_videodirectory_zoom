@@ -24,6 +24,9 @@
 require_once( __DIR__ . '/../../config.php');
 require_login();
 defined('MOODLE_INTERNAL') || die();
+require_once( __DIR__ . '/locallib.php');
+
+$settings = get_settings();
 
 $id = required_param('video_id', PARAM_INT);
 
@@ -47,13 +50,16 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('studio', 'local_video_directory') .
                         ' - <span class="videoname">' . $videoname . '</span>');
 
-$tools = [ 
+$tools = [
         ['name' => 'crop', 'description' => get_string('crop', 'local_video_directory')] ,
-        ['name' => 'merge', 'description' => get_string('merge', 'local_video_directory')] ,
         ['name' => 'cut', 'description' => get_string('cut', 'local_video_directory')] ,
         ['name' => 'cat', 'description' => get_string('cat', 'local_video_directory')] ,
         ['name' => 'speed', 'description' => get_string('speed', 'local_video_directory')] ,
     ];
+
+if ($settings->multiresolution) {
+    $tools[] = ['name' => 'merge', 'description' => get_string('merge', 'local_video_directory')];
+}
 
 $tasks_crop = local_video_directory_studio_tasks($id, 'crop', ['startx', 'starty', 'endx', 'endy']);
 $tasks_merge = local_video_directory_studio_tasks($id, 'merge', ['video_id_small', 'height', 'border']);

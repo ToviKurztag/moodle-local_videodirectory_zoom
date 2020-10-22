@@ -25,6 +25,7 @@ $string['pluginname'] = 'ספריית וידאו';
 
 $string['video_directory:video'] = 'שימוש ברכיב ספריית וידאו';
 
+
 $string['actions'] = 'פעולות';
 $string['agree'] = 'אישור ביצוע';
 $string['are_you_sure'] = 'האם למחוק את הסרט ?';
@@ -156,6 +157,15 @@ $string['crop'] = "חיתוך הסרט";
 $string['studio'] = "סטודיו לעריכת הסרטים";
 $string['merge'] = "איחוד שני סרטים לאחד";
 $string['cut'] = "קיצוץ הסרט";
+$string['cutsides'] = "חיתוך צדדי הסרטון";
+$string['cutmiddlepart'] = "חיתוך קטע אמצעי";
+$string['cutfrom'] = "בחר נקודת התחלה";
+$string['cutto'] = "בחר נקודת סיום";
+$string['copyvideovalue'] = "העתק מיקום סרטון";
+$string['cuttingrange'] = "טווח החיתוך:";
+$string['cuttype'] = "סוג החיתוך";
+$string['cuttype_help'] = "חיתוך צדדי הסרט: הסרת שני החלקים החיצוניים. " . "<br>" ."
+חיתוך קטע אמצעי: הסרת החלק האמצעי וחיבור שני החלקים החיצוניים";
 $string['bg_movie'] = "סרטון רקע";
 $string['small_movie'] = "סרטון קטן";
 $string['border'] = "שוליים";
@@ -209,3 +219,29 @@ $string['result_content'] = 'נמצא בתוכן הסרטון';
 $string['portalimagesbeforesearch'] = 'הצגת תמונות סרטים לפני חיפוש בפורטל';
 $string['portalimagesbeforesearchdesc'] = 'אפשרות זו מגדירה האם יוצגו תמונות של סרטונים לפני ביצוע חיפוש בפורטל';
 $string['description'] = "תיאור";
+$string['enrolteachers'] = "הוסף את כל המורים לתפקיד המערכתי local_video_directory";
+$string['zoomvideosname'] = "משיכת הקלטות זום לספרית הוידאו";
+$string['sendemailwhenready'] = "שליחת מייל לבעלים כשהסרט מוכן לשימוש";
+$string['sendemailwhenreadydesc'] = "אם מסומן - מוודל ישלח מייל הודעה לבעלים כאשר הסרט מוכן לשימוש.";
+$string['emailsubject'] = 'סרטון זום מוכן עבורך במוודל';
+$string['emailmsg'] = 'שלום.
+המרת סרטון מזום והעברתו למערכת מוודל הסתיימה בהצלחה.
+תוכל לצפות בסרטון בספרית הוידאו.
+מזהה הסרטון הוא: ';
+$string['zoomApiKey'] = 'מפתח חשבון זום';
+$string['zoomApiKeydesc'] = 'יש להזין את מפתח חשבון הזום ממנו יש למשוך את הסרטונים';
+$string['zoomApiSecret'] = 'סיסמת חשבון זום';
+$string['zoomApiSecretdesc'] = 'יש להזין את סיסמת חשבון הזום ממנו יש למשוך את הסרטונים';
+$string['zoomApiUrl'] = 'קישור גישה לזום';
+$string['zoomApiUrldesc'] = 'יש להזין קישור גישה לאתר זום';
+$string['numofzoomusers'] = 'מספר חשבונות הזום הקיימים';
+$string['numofzoomusersdesc'] = 'יש להזין את מספר חשבונות הזום הקיימים';
+$string['monthpull'] = 'חודש למשיכה';
+$string['monthpulldesc'] = 'יש להזין את החודש ממנו לבצע את המשיכה. ברירת מחדל: חודש אחורה מהתאריך הנוכחי';
+
+
+$string['minimumtimefromzoom'] = 'מספר דקות מינימלי למשיכת הסרטון מזום';
+$string['minimumtimefromzoomdesc'] = 'יש להכניס את מספר הדקות המינימלי של הסרטון כדי שירד מזום. ברירת מחדל 0';
+$string['wgeturldesc'] = 'אנא הזינו את הכתובת של Wegt';
+$string['wgeturl'] = 'כתובת ה - Wegt';
+$string['hlsingle_base_url'] = 'כתובת להזרמת HLS של קובץ בודד';

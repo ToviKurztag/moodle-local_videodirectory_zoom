@@ -86,26 +86,44 @@ $mform = new delete_form();
 if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot . '/local/video_directory/list.php');
 } else if ($fromform = $mform->get_data()) {
+    
+    $filename = local_video_directory_get_filename($fromform->id);
+    $where = array("video_id" => $fromform->id);
+    $multifilenames = $DB->get_records('local_video_directory_multi' , $where);
+
     $where = array("id" => $fromform->id);
     $deleted = $DB->delete_records('local_video_directory', $where);
 
-    $filename = local_video_directory_get_filename($fromform->id);
-
-    // Delete files.
+    // Delete files by id.
     $thumb = str_replace($streamingurl, $dirs['converted'], $fromform->thumb);
-    $video = $dirs['converted'] . $filename . '.mp4';
     if (file_exists($thumb)) {
         unlink($thumb);
     }
 
-    if (file_exists($video)) {
-        unlink($video);
+    // Delete files by hash, only if there is no another same video.
+    $videoconverted = $dirs['converted'] . $filename . '.mp4';
+
+    $samevideos = $DB->get_records('local_video_directory' , ['filename' => $filename]);
+    if (file_exists($videoconverted) && $samevideos == array()) {
+        unlink($videoconverted);
     }
+    foreach ($multifilenames as $multi) {
+        $videomulti = $dirs['multidir'] .  $multi->filename;
+        if (file_exists($videomulti) && $samevideos == array()) {
+            unlink($videomulti);
+        }
+    }
+
+    // Delete zoom.
+    $where = array('video_id' => $fromform->id);
+    $DB->delete_records('local_video_directory_zoom', $where);
 
     // Delete tags.
     $where = array("itemid" => $fromform->id, "itemtype" => 'local_video_directory');
     $deleted = $DB->delete_records('tag_instance', $where);
     redirect($CFG->wwwroot . '/local/video_directory/list.php');
+
+
 } else {
     echo $OUTPUT->header();
     echo get_string("are_you_sure", 'local_video_directory');

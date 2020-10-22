@@ -53,8 +53,13 @@ if ($video->filename != $id . '.mp4') {
 } else {
     $filename = $id;
 }
-
 header("Content-type: image/png");
+// Tami
+if (!file_exists($streamingdir . $filename . ($second ? "-" . $second : '') . "-mini.png")
+    && !file_exists($streamingdir . $filename . ($second ? "-" . $second : '') . ".png")
+    && $video->filename && $video->convert_status == 7){
+    readfile($CFG->wwwroot . '/local/video_directory/pix/headphonesThumb.jpg');
+} // >
 if ($mini) {
     readfile($streamingdir . $filename . ($second ? "-" . $second : '') . "-mini.png");
 } else {

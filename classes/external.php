@@ -223,6 +223,7 @@ class local_video_directory_external extends external_api {
         $isvideostream = $DB->get_record('modules', ['name' => 'videostream']);
 
         foreach ($videos as $video) {
+            $video->timecreated = date("Y-m-d H:i:s", $video->timecreated);
             if (is_numeric($video->convert_status)) {
                 $video->convert_status = get_string('state_' . $video->convert_status, 'local_video_directory');
                 if (($settings->showwhere != 0) && ($isvideostream)) {

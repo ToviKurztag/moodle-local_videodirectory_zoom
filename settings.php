@@ -206,6 +206,22 @@ if ($hassiteconfig) {
         PARAM_URL
     ));
 
+    // HLSingle base URL.
+    $settings->add( new admin_setting_configtext('local_video_directory/hlsingle_base_url',
+        get_string('hlsingle_base_url', 'local_video_directory'),
+        get_string('hlsingle_base_url', 'local_video_directory'),
+        $CFG->wwwroot . '/hlsingle',
+        PARAM_RAW
+    ));
+
+    $settings->add( new admin_setting_configtext(
+        'local_video_directory/wgeturl',
+        get_string('wgeturl', 'local_video_directory'),
+        get_string('wgeturldesc', 'local_video_directory'),
+        '/usr/bin/wget',
+        PARAM_URL
+    ));
+
     $settings->add( new admin_setting_configcheckbox(
         'local_video_directory/googlespeech',
         get_string('googlespeech', 'local_video_directory'),
@@ -291,6 +307,57 @@ if ($hassiteconfig) {
         'local_video_directory/portalimagesbeforesearch',
         get_string('portalimagesbeforesearch', 'local_video_directory'),
         get_string('portalimagesbeforesearchdesc', 'local_video_directory'),
+        '0'
+    ));
+
+    $settings->add( new admin_setting_configtext(
+        'local_video_directory/zoomApiKey',
+        get_string('zoomApiKey', 'local_video_directory'),
+        get_string('zoomApiKeydesc', 'local_video_directory'),
+        ''
+    ));
+
+    $settings->add( new admin_setting_configtext(
+        'local_video_directory/zoomApiSecret',
+        get_string('zoomApiSecret', 'local_video_directory'),
+        get_string('zoomApiSecretdesc', 'local_video_directory'),
+        ''
+    ));
+
+    $settings->add( new admin_setting_configtext(
+        'local_video_directory/zoomApiUrl',
+        get_string('zoomApiUrl', 'local_video_directory'),
+        get_string('zoomApiUrldesc', 'local_video_directory'),
+        'https://api.zoom.us/v2/'
+    ));
+
+    $settings->add( new admin_setting_configtext(
+        'local_video_directory/numofzoomusers',
+        get_string('numofzoomusers', 'local_video_directory'),
+        get_string('numofzoomusersdesc', 'local_video_directory'),
+        '500'
+    ));
+
+
+    $monthes = array("current" => "current", "1" => 1 , "2" => 2, "3" => 3, "4" => 4
+    , "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9, "10" => 10, "11" => 11, "12" => 12);
+    $settings->add( new admin_setting_configselect('local_video_directory/monthpull',
+        get_string('monthpull', 'local_video_directory'),
+        get_string('monthpulldesc', 'local_video_directory'),
+        'current', $monthes
+    ));
+
+    $settings->add( new admin_setting_configcheckbox(
+        'local_video_directory/sendemailwhenready',
+        get_string('sendemailwhenready', 'local_video_directory'),
+        get_string('sendemailwhenreadydesc', 'local_video_directory'),
+        '0'
+    ));
+
+    $settings->add( new admin_setting_configtext(
+        'local_video_directory/minimumtimefromzoom',
+        get_string('minimumtimefromzoom', 'local_video_directory'),
+        get_string('minimumtimefromzoomdesc', 'local_video_directory'),
         '0'
     ));
 

@@ -1,0 +1,20 @@
+<div id="studio-cut-container">
+<video id="studio-cut-video"
+width={{width}} 
+height={{height}} 
+{{! autoplay }}
+poster="{{wwwroot}}/local/video_directory/thumb.php?id={{thumb}}"
+src="{{url}}" 
+style="width: {{width}}px; height: {{height}}px; border: 1px solid black;z-index:1;"
+controls>
+</video>
+</div>
+ 
+<style>
+input[type="range"] {
+    /*-webkit-appearance: progress-bar !important;*/
+    height: 6px !important;
+    border: black 6px double !important;
+    padding: 0px !important;
+}
+</style>

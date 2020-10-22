@@ -115,13 +115,14 @@ if ($mform->is_cancelled()) {
                 get_string('inqueue', 'local_video_directory'));
 } else {
     echo $OUTPUT->header();
-
     $video = $DB->get_record('local_video_directory', array("id" => $id));
-
+    $videoname = $video->orig_filename;
+    echo $OUTPUT->heading(get_string('crop', 'local_video_directory') .
+    ' - <span class="videoname">' . $videoname . '</span>');
     $height = $width / ($video->width / $video->height);
 
     if ($streaming = get_streaming_server_url()) {
-        $url = $streaming . "/" . $id . ".mp4";
+        $url = $streaming . "/" . local_video_directory_get_filename($id) . ".mp4";
     } else {
         $url = $CFG->wwwroot . "/local/video_directory/play.php?video_id=" . $id;
     }

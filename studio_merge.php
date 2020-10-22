@@ -108,23 +108,24 @@ if ($mform->is_cancelled()) {
     //Handle form cancel operation, if cancel button is present on form
     redirect($CFG->wwwroot . '/local/video_directory');
 } else if ($fromform = $mform->get_data()) {
-  //In this case you process validated data. $mform->get_data() returns data posted in form.
-	$now = time();
-	   $record = array("video_id" => $fromform->bg_movie,
-					   "user_id" => $USER->id,
-					   "state" => 0,
-		   			//"bg_movie" => $fromform->bg_movie,
-   					"video_id_small" => $fromform->small_movie,
-   					"height" => $fromform->height,
-   					"border" => $fromform->border,
-   					"location" => $fromform->location,
-   					"audio" => $fromform->audio,
-					"fade" => $fromform->fade,
-					"datecreated" => $now,
-					"datemodified" => $now,
-				 );
-					
-	$id = $DB->insert_record("local_video_directory_merge",$record);
+    // In this case you process validated data. $mform->get_data() returns data posted in form.
+    $now = time();
+    $record = array("video_id" => $fromform->bg_movie,
+			"user_id" => $USER->id,
+			//"save" => 'new',
+            "state" => 0,
+            //"bg_movie" => $fromform->bg_movie,
+            "video_id_small" => $fromform->small_movie,
+            "height" => $fromform->height,
+            "border" => $fromform->border,
+            "location" => $fromform->location,
+            "audio" => $fromform->audio,
+            "fade" => $fromform->fade,
+            "datecreated" => $now,
+            "datemodified" => $now,
+            );
+
+    $id = $DB->insert_record("local_video_directory_merge", $record);
 
 	//echo $OUTPUT->header();
 	//echo "Inserted id is : ".$id;	
@@ -137,7 +138,10 @@ if ($mform->is_cancelled()) {
   //  $mform->set_data($toform);
   //displays the form
 	echo $OUTPUT->header();
-  		
+    $video = $DB->get_record('local_video_directory', array("id" => $id));
+    $videoname = $video->orig_filename;
+    echo $OUTPUT->heading(get_string('merge', 'local_video_directory') .
+    ' - <span class="videoname">' . $videoname . '</span>');
     $mform->display();
 }
 

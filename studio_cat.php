@@ -36,7 +36,7 @@ $PAGE->set_url('/local/video_directory/studio_cat.php?video_id=' . $id);
 $PAGE->navbar->add(get_string('pluginname', 'local_video_directory'), new moodle_url('/local/video_directory/'));
 $PAGE->navbar->add(get_string('studio', 'local_video_directory'),
         new moodle_url('/local/video_directory/studio.php?video_id=' . $id));
-$PAGE->navbar->add(get_string('merge', 'local_video_directory'));
+$PAGE->navbar->add(get_string('cat', 'local_video_directory'));
 
 class simplehtml_form extends moodleform {
     // Add elements to form.
@@ -86,6 +86,8 @@ if ($mform->is_cancelled()) {
     $record = array(    "video_id" => $fromform->first,
                         "user_id" => $USER->id,
                         "state" => 0,
+                        "save" => "new",
+
                         "video_id_cat" => $fromform->second,
                         "datecreated" => $now,
                         "datemodified" => $now,
@@ -101,6 +103,10 @@ if ($mform->is_cancelled()) {
     // Set default data (if any)
     // Displays the form.
     echo $OUTPUT->header();
+    $video = $DB->get_record('local_video_directory', array("id" => $id));
+    $videoname = $video->orig_filename;
+    echo $OUTPUT->heading(get_string('cat', 'local_video_directory') .
+    ' - <span class="videoname">' . $videoname . '</span>');
     $mform->display();
 }
 

@@ -21,10 +21,9 @@
  * @copyright  2016 OpenApp
  * @license    http://www.gnu.org/copyleft/gpl.html gnu gpl v3 or later
  */
+
 $string['pluginname'] = 'Video Directory';
-
 $string['video_directory:video'] = 'use local video directory';
-
 $string['actions'] = 'Actions';
 $string['agree'] = 'Agree to proceed';
 $string['are_you_sure'] = 'Are you sure you want to delete this video ?';
@@ -156,6 +155,15 @@ $string['crop'] = "Crop Video";
 $string['studio'] = "Video Editing Studio";
 $string['merge'] = "Merge two videos into one";
 $string['cut'] = "Cut video";
+$string['cutsides'] = "cut video sides";
+$string['cutmiddlepart'] = "cut middlepart";
+$string['cutfrom'] = "choose start point";
+$string['cutto'] = "choose end point";
+$string['copyvideovalue'] = "copy video value";
+$string['cuttingrange'] = "cutting range:";
+$string['cuttype'] = "cut type";
+$string['cuttype_help'] =  "cutting video sides: removing the two outer parts" . "<br>"
+ ."Cutting middle part: Removing the middle part and connecting the two outer parts";
 $string['bg_movie'] = "Background Video";
 $string['small_movie'] = "Small Video";
 $string['border'] = "Border";
@@ -209,3 +217,28 @@ $string['result_content'] = 'Found in text content';
 $string['portalimagesbeforesearch'] = 'Show images of video in portal before search';
 $string['portalimagesbeforesearchdesc'] = 'This option set whether images of videos will be shown before any search in portal';
 $string['description'] = "Description";
+$string['enrolteachers'] = "add all teachers to local_video_directory role";
+$string['zoomvideosname'] = "pull all the meetings recordings from zoom to the video directory";
+
+$string['zoomApiKey'] = 'Zoom Api Key';
+$string['zoomApiKeydesc'] = 'Insert the key of your zoom Api';
+$string['zoomApiSecret'] = 'Zoom Api Secret';
+$string['zoomApiSecretdesc'] = 'Insert the secret of your zoom Api';
+$string['zoomApiUrl'] = 'Zoom Api url';
+$string['zoomApiUrldesc'] = 'Insert the url of your zoom Api';
+$string['numofzoomusers'] = 'Number of zoom accounts';
+$string['numofzoomusersdesc'] = 'Insert the number of zoom accounts';
+$string['monthpull'] = 'Month to pull';
+$string['monthpulldesc'] = 'Insert the month tou want to pull from. (If not set, current month run)';
+
+
+$string['sendemailwhenready'] = "send an email to owner when the video is ready to use";
+$string['sendemailwhenreadydesc'] = "if checked - moodle will send an email to the owner when the video is ready to use.";
+$string['emailsubject'] = 'The zoom video is ready in moodle';
+$string['emailmsg'] = 'Hello. the zoom videoid ready in moodle. 
+you can find it in the video directory. video id: ';
+$string['minimumtimefromzoom'] = 'Minimum minutes to download moovie from zoom';
+$string['minimumtimefromzoomdesc'] = 'Insert the minimum minutes to download moovie from zoom. by default 0';
+$string['wgeturl'] = "Wget base url";
+$string['wgeturldesc'] = "Insert here the base url of the wget";
+$string['hlsingle_base_url'] = 'Streaming address for HLS single file';
