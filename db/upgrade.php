@@ -423,7 +423,7 @@ function xmldb_local_video_directory_upgrade($oldversion) {
         }
         upgrade_plugin_savepoint(true, 2020140510, 'local', 'video_directory');
     }
-    if ($oldversion < 2020140509) {
+    if ($oldversion < 2020140510) {
 
         $table = new xmldb_table('local_video_directory_zoom');
         $field = new xmldb_field('video_original_name', XMLDB_TYPE_CHAR, '1333', null, null, null, null);
